@@ -87,6 +87,7 @@ contract TRL is TRLInterface, Ownable {
         emit VotesBought(msg.sender, _amount, currentPeriod());
     }
 
+
     /**
     * @dev Adds a new vote for a candidate. It fails if the candidate hasn't approved before the specified amount
     * @param _candidateAddress address of the candidate selected
@@ -258,5 +259,14 @@ contract TRL is TRLInterface, Ownable {
         uint256 auxPercentageVotes = auxDecimalVotes / _totalVotes;
         uint256 totalAmount = _poolAmount * auxPercentageVotes / 100;
         return totalAmount;
+    }
+
+    /**
+    * @dev Function that issues a test event. This is used to test the
+    *      trl-listener infrastructure
+    */
+
+    function launchTestEvent() public{
+        emit Vote(address(0), address(0),block.timestamp, 0);
     }
 }

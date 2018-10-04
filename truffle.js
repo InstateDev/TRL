@@ -19,7 +19,15 @@ module.exports = {
       gas: 4600000,
       gasPrice: 25000000000
     },
+    rinkeby_frontier: {
+      provider: function () {
+        return new HDWalletProvider(mnemonic, 'http://18.188.91.154:8545')
+      },
+      network_id: 4
+    },
     rinkeby_infura: {
+      gas: 4600000,
+      gasPrice: 20,
       provider: function () {
         return new HDWalletProvider(mnemonic, 'https://rinkeby.infura.io/xzValG5J1iIcK29rdTFK')
       },

@@ -22,6 +22,7 @@ contract TRLInterface {
     function currentPeriod() public view returns(uint256);
     function currentStage() public view returns(uint256);
     function claimBounty() public;
+    function launchTestEvent() public;
 }
 
 
