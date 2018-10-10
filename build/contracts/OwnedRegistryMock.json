@@ -286,14 +286,14 @@
     "absolutePath": "/Users/carlosbuendia/Documents/Projects/consensys/Frontier/TRL/contracts/mocks/OwnedRegistryMock.sol",
     "exportedSymbols": {
       "OwnedRegistryMock": [
-        1339
+        1679
       ]
     },
-    "id": 1340,
+    "id": 1680,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 1307,
+        "id": 1647,
         "literals": [
           "solidity",
           "^",
@@ -306,10 +306,10 @@
       {
         "absolutePath": "@frontier-token-research/role-registries/contracts/OwnedRegistry.sol",
         "file": "@frontier-token-research/role-registries/contracts/OwnedRegistry.sol",
-        "id": 1308,
+        "id": 1648,
         "nodeType": "ImportDirective",
-        "scope": 1340,
-        "sourceUnit": 1909,
+        "scope": 1680,
+        "sourceUnit": 2249,
         "src": "26:78:7",
         "symbolAliases": [],
         "unitAlias": ""
@@ -320,48 +320,48 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 1309,
+              "id": 1649,
               "name": "OwnedRegistry",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 1908,
+              "referencedDeclaration": 2248,
               "src": "199:13:7",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_OwnedRegistry_$1908",
+                "typeIdentifier": "t_contract$_OwnedRegistry_$2248",
                 "typeString": "contract OwnedRegistry"
               }
             },
-            "id": 1310,
+            "id": 1650,
             "nodeType": "InheritanceSpecifier",
             "src": "199:13:7"
           }
         ],
         "contractDependencies": [
-          1908,
-          2023,
-          2173
+          2248,
+          2363,
+          2513
         ],
         "contractKind": "contract",
         "documentation": "Generic Registry, used for Candidates and Voters\n*",
         "fullyImplemented": true,
-        "id": 1339,
+        "id": 1679,
         "linearizedBaseContracts": [
-          1339,
-          1908,
-          2173,
-          2023
+          1679,
+          2248,
+          2513,
+          2363
         ],
         "name": "OwnedRegistryMock",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "body": {
-              "id": 1337,
+              "id": 1677,
               "nodeType": "Block",
               "src": "306:129:7",
               "statements": [
                 {
                   "body": {
-                    "id": 1335,
+                    "id": 1675,
                     "nodeType": "Block",
                     "src": "370:59:7",
                     "statements": [
@@ -373,25 +373,25 @@
                               "argumentTypes": null,
                               "baseExpression": {
                                 "argumentTypes": null,
-                                "id": 1330,
+                                "id": 1670,
                                 "name": "_whiteListedAccounts",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 1313,
+                                "referencedDeclaration": 1653,
                                 "src": "394:20:7",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_array$_t_address_$dyn_memory_ptr",
                                   "typeString": "address[] memory"
                                 }
                               },
-                              "id": 1332,
+                              "id": 1672,
                               "indexExpression": {
                                 "argumentTypes": null,
-                                "id": 1331,
+                                "id": 1671,
                                 "name": "i",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 1319,
+                                "referencedDeclaration": 1659,
                                 "src": "415:1:7",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_uint256",
@@ -417,20 +417,20 @@
                                 "typeString": "address"
                               }
                             ],
-                            "id": 1329,
+                            "id": 1669,
                             "name": "whiteList",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [
-                              1798
+                              2138
                             ],
-                            "referencedDeclaration": 1798,
+                            "referencedDeclaration": 2138,
                             "src": "384:9:7",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_nonpayable$_t_address_$returns$__$",
                               "typeString": "function (address)"
                             }
                           },
-                          "id": 1333,
+                          "id": 1673,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -444,7 +444,7 @@
                             "typeString": "tuple()"
                           }
                         },
-                        "id": 1334,
+                        "id": 1674,
                         "nodeType": "ExpressionStatement",
                         "src": "384:34:7"
                       }
@@ -456,18 +456,18 @@
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     },
-                    "id": 1325,
+                    "id": 1665,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftExpression": {
                       "argumentTypes": null,
-                      "id": 1322,
+                      "id": 1662,
                       "name": "i",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1319,
+                      "referencedDeclaration": 1659,
                       "src": "333:1:7",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -480,18 +480,18 @@
                       "argumentTypes": null,
                       "expression": {
                         "argumentTypes": null,
-                        "id": 1323,
+                        "id": 1663,
                         "name": "_whiteListedAccounts",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1313,
+                        "referencedDeclaration": 1653,
                         "src": "337:20:7",
                         "typeDescriptions": {
                           "typeIdentifier": "t_array$_t_address_$dyn_memory_ptr",
                           "typeString": "address[] memory"
                         }
                       },
-                      "id": 1324,
+                      "id": 1664,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -511,18 +511,18 @@
                       "typeString": "bool"
                     }
                   },
-                  "id": 1336,
+                  "id": 1676,
                   "initializationExpression": {
                     "assignments": [
-                      1319
+                      1659
                     ],
                     "declarations": [
                       {
                         "constant": false,
-                        "id": 1319,
+                        "id": 1659,
                         "name": "i",
                         "nodeType": "VariableDeclaration",
-                        "scope": 1338,
+                        "scope": 1678,
                         "src": "321:6:7",
                         "stateVariable": false,
                         "storageLocation": "default",
@@ -531,7 +531,7 @@
                           "typeString": "uint256"
                         },
                         "typeName": {
-                          "id": 1318,
+                          "id": 1658,
                           "name": "uint",
                           "nodeType": "ElementaryTypeName",
                           "src": "321:4:7",
@@ -544,11 +544,11 @@
                         "visibility": "internal"
                       }
                     ],
-                    "id": 1321,
+                    "id": 1661,
                     "initialValue": {
                       "argumentTypes": null,
                       "hexValue": "30",
-                      "id": 1320,
+                      "id": 1660,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -569,7 +569,7 @@
                   "loopExpression": {
                     "expression": {
                       "argumentTypes": null,
-                      "id": 1327,
+                      "id": 1667,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -580,11 +580,11 @@
                       "src": "366:3:7",
                       "subExpression": {
                         "argumentTypes": null,
-                        "id": 1326,
+                        "id": 1666,
                         "name": "i",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1319,
+                        "referencedDeclaration": 1659,
                         "src": "366:1:7",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
@@ -596,7 +596,7 @@
                         "typeString": "uint256"
                       }
                     },
-                    "id": 1328,
+                    "id": 1668,
                     "nodeType": "ExpressionStatement",
                     "src": "366:3:7"
                   },
@@ -606,24 +606,24 @@
               ]
             },
             "documentation": null,
-            "id": 1338,
+            "id": 1678,
             "implemented": true,
             "isConstructor": true,
             "isDeclaredConst": false,
             "modifiers": [
               {
                 "arguments": [],
-                "id": 1316,
+                "id": 1656,
                 "modifierName": {
                   "argumentTypes": null,
-                  "id": 1315,
+                  "id": 1655,
                   "name": "OwnedRegistry",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 1908,
+                  "referencedDeclaration": 2248,
                   "src": "271:13:7",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_type$_t_contract$_OwnedRegistry_$1908_$",
+                    "typeIdentifier": "t_type$_t_contract$_OwnedRegistry_$2248_$",
                     "typeString": "type(contract OwnedRegistry)"
                   }
                 },
@@ -634,15 +634,15 @@
             "name": "",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1314,
+              "id": 1654,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1313,
+                  "id": 1653,
                   "name": "_whiteListedAccounts",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1338,
+                  "scope": 1678,
                   "src": "231:30:7",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -652,7 +652,7 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 1311,
+                      "id": 1651,
                       "name": "address",
                       "nodeType": "ElementaryTypeName",
                       "src": "231:7:7",
@@ -661,7 +661,7 @@
                         "typeString": "address"
                       }
                     },
-                    "id": 1312,
+                    "id": 1652,
                     "length": null,
                     "nodeType": "ArrayTypeName",
                     "src": "231:9:7",
@@ -678,19 +678,19 @@
             },
             "payable": false,
             "returnParameters": {
-              "id": 1317,
+              "id": 1657,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "306:0:7"
             },
-            "scope": 1339,
+            "scope": 1679,
             "src": "219:216:7",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           }
         ],
-        "scope": 1340,
+        "scope": 1680,
         "src": "169:268:7"
       }
     ],
@@ -700,14 +700,14 @@
     "absolutePath": "/Users/carlosbuendia/Documents/Projects/consensys/Frontier/TRL/contracts/mocks/OwnedRegistryMock.sol",
     "exportedSymbols": {
       "OwnedRegistryMock": [
-        1339
+        1679
       ]
     },
-    "id": 1340,
+    "id": 1680,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 1307,
+        "id": 1647,
         "literals": [
           "solidity",
           "^",
@@ -720,10 +720,10 @@
       {
         "absolutePath": "@frontier-token-research/role-registries/contracts/OwnedRegistry.sol",
         "file": "@frontier-token-research/role-registries/contracts/OwnedRegistry.sol",
-        "id": 1308,
+        "id": 1648,
         "nodeType": "ImportDirective",
-        "scope": 1340,
-        "sourceUnit": 1909,
+        "scope": 1680,
+        "sourceUnit": 2249,
         "src": "26:78:7",
         "symbolAliases": [],
         "unitAlias": ""
@@ -734,48 +734,48 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 1309,
+              "id": 1649,
               "name": "OwnedRegistry",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 1908,
+              "referencedDeclaration": 2248,
               "src": "199:13:7",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_OwnedRegistry_$1908",
+                "typeIdentifier": "t_contract$_OwnedRegistry_$2248",
                 "typeString": "contract OwnedRegistry"
               }
             },
-            "id": 1310,
+            "id": 1650,
             "nodeType": "InheritanceSpecifier",
             "src": "199:13:7"
           }
         ],
         "contractDependencies": [
-          1908,
-          2023,
-          2173
+          2248,
+          2363,
+          2513
         ],
         "contractKind": "contract",
         "documentation": "Generic Registry, used for Candidates and Voters\n*",
         "fullyImplemented": true,
-        "id": 1339,
+        "id": 1679,
         "linearizedBaseContracts": [
-          1339,
-          1908,
-          2173,
-          2023
+          1679,
+          2248,
+          2513,
+          2363
         ],
         "name": "OwnedRegistryMock",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "body": {
-              "id": 1337,
+              "id": 1677,
               "nodeType": "Block",
               "src": "306:129:7",
               "statements": [
                 {
                   "body": {
-                    "id": 1335,
+                    "id": 1675,
                     "nodeType": "Block",
                     "src": "370:59:7",
                     "statements": [
@@ -787,25 +787,25 @@
                               "argumentTypes": null,
                               "baseExpression": {
                                 "argumentTypes": null,
-                                "id": 1330,
+                                "id": 1670,
                                 "name": "_whiteListedAccounts",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 1313,
+                                "referencedDeclaration": 1653,
                                 "src": "394:20:7",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_array$_t_address_$dyn_memory_ptr",
                                   "typeString": "address[] memory"
                                 }
                               },
-                              "id": 1332,
+                              "id": 1672,
                               "indexExpression": {
                                 "argumentTypes": null,
-                                "id": 1331,
+                                "id": 1671,
                                 "name": "i",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 1319,
+                                "referencedDeclaration": 1659,
                                 "src": "415:1:7",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_uint256",
@@ -831,20 +831,20 @@
                                 "typeString": "address"
                               }
                             ],
-                            "id": 1329,
+                            "id": 1669,
                             "name": "whiteList",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [
-                              1798
+                              2138
                             ],
-                            "referencedDeclaration": 1798,
+                            "referencedDeclaration": 2138,
                             "src": "384:9:7",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_nonpayable$_t_address_$returns$__$",
                               "typeString": "function (address)"
                             }
                           },
-                          "id": 1333,
+                          "id": 1673,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -858,7 +858,7 @@
                             "typeString": "tuple()"
                           }
                         },
-                        "id": 1334,
+                        "id": 1674,
                         "nodeType": "ExpressionStatement",
                         "src": "384:34:7"
                       }
@@ -870,18 +870,18 @@
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     },
-                    "id": 1325,
+                    "id": 1665,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftExpression": {
                       "argumentTypes": null,
-                      "id": 1322,
+                      "id": 1662,
                       "name": "i",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1319,
+                      "referencedDeclaration": 1659,
                       "src": "333:1:7",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -894,18 +894,18 @@
                       "argumentTypes": null,
                       "expression": {
                         "argumentTypes": null,
-                        "id": 1323,
+                        "id": 1663,
                         "name": "_whiteListedAccounts",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1313,
+                        "referencedDeclaration": 1653,
                         "src": "337:20:7",
                         "typeDescriptions": {
                           "typeIdentifier": "t_array$_t_address_$dyn_memory_ptr",
                           "typeString": "address[] memory"
                         }
                       },
-                      "id": 1324,
+                      "id": 1664,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -925,18 +925,18 @@
                       "typeString": "bool"
                     }
                   },
-                  "id": 1336,
+                  "id": 1676,
                   "initializationExpression": {
                     "assignments": [
-                      1319
+                      1659
                     ],
                     "declarations": [
                       {
                         "constant": false,
-                        "id": 1319,
+                        "id": 1659,
                         "name": "i",
                         "nodeType": "VariableDeclaration",
-                        "scope": 1338,
+                        "scope": 1678,
                         "src": "321:6:7",
                         "stateVariable": false,
                         "storageLocation": "default",
@@ -945,7 +945,7 @@
                           "typeString": "uint256"
                         },
                         "typeName": {
-                          "id": 1318,
+                          "id": 1658,
                           "name": "uint",
                           "nodeType": "ElementaryTypeName",
                           "src": "321:4:7",
@@ -958,11 +958,11 @@
                         "visibility": "internal"
                       }
                     ],
-                    "id": 1321,
+                    "id": 1661,
                     "initialValue": {
                       "argumentTypes": null,
                       "hexValue": "30",
-                      "id": 1320,
+                      "id": 1660,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -983,7 +983,7 @@
                   "loopExpression": {
                     "expression": {
                       "argumentTypes": null,
-                      "id": 1327,
+                      "id": 1667,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -994,11 +994,11 @@
                       "src": "366:3:7",
                       "subExpression": {
                         "argumentTypes": null,
-                        "id": 1326,
+                        "id": 1666,
                         "name": "i",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1319,
+                        "referencedDeclaration": 1659,
                         "src": "366:1:7",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
@@ -1010,7 +1010,7 @@
                         "typeString": "uint256"
                       }
                     },
-                    "id": 1328,
+                    "id": 1668,
                     "nodeType": "ExpressionStatement",
                     "src": "366:3:7"
                   },
@@ -1020,24 +1020,24 @@
               ]
             },
             "documentation": null,
-            "id": 1338,
+            "id": 1678,
             "implemented": true,
             "isConstructor": true,
             "isDeclaredConst": false,
             "modifiers": [
               {
                 "arguments": [],
-                "id": 1316,
+                "id": 1656,
                 "modifierName": {
                   "argumentTypes": null,
-                  "id": 1315,
+                  "id": 1655,
                   "name": "OwnedRegistry",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 1908,
+                  "referencedDeclaration": 2248,
                   "src": "271:13:7",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_type$_t_contract$_OwnedRegistry_$1908_$",
+                    "typeIdentifier": "t_type$_t_contract$_OwnedRegistry_$2248_$",
                     "typeString": "type(contract OwnedRegistry)"
                   }
                 },
@@ -1048,15 +1048,15 @@
             "name": "",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1314,
+              "id": 1654,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1313,
+                  "id": 1653,
                   "name": "_whiteListedAccounts",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1338,
+                  "scope": 1678,
                   "src": "231:30:7",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1066,7 +1066,7 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 1311,
+                      "id": 1651,
                       "name": "address",
                       "nodeType": "ElementaryTypeName",
                       "src": "231:7:7",
@@ -1075,7 +1075,7 @@
                         "typeString": "address"
                       }
                     },
-                    "id": 1312,
+                    "id": 1652,
                     "length": null,
                     "nodeType": "ArrayTypeName",
                     "src": "231:9:7",
@@ -1092,19 +1092,19 @@
             },
             "payable": false,
             "returnParameters": {
-              "id": 1317,
+              "id": 1657,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "306:0:7"
             },
-            "scope": 1339,
+            "scope": 1679,
             "src": "219:216:7",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           }
         ],
-        "scope": 1340,
+        "scope": 1680,
         "src": "169:268:7"
       }
     ],
@@ -1116,5 +1116,5 @@
   },
   "networks": {},
   "schemaVersion": "2.0.0",
-  "updatedAt": "2018-09-26T08:51:08.673Z"
+  "updatedAt": "2018-10-09T10:01:31.012Z"
 }

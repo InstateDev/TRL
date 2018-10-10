@@ -25,7 +25,7 @@ module.exports = (deployer) => {
       const FrontierToken = await Standard20TokenContract.deployed()
       const Vault = await VaultContract.deployed()
       const ProxyTRL = await TRLContract.at(ProxyInstance.address)
-      await ProxyTRL.setToken(FrontierToken.address)
+      await ProxyTRL.setToken(config.tokenAddress)
       await ProxyTRL.setCandidateRegistry(candidateRegistryAddress)
       await ProxyTRL.setVoterRegistry(voterRegistryAddress)
       await ProxyTRL.setVault(Vault.address)
