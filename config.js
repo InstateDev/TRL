@@ -2,9 +2,9 @@
 
 module.exports = {
   // ttl: 10,
-  proxyMigration: false,
-  ttl: 40000, // Aproximately 1 Week
-  activeTime: 40000,
+  proxyMigration: true,
+  ttl: 1000000000000, // Aproximately 1 Week
+  activeTime: 1000000000000,
   claimTime: 0,
   candidateLength: 100,
   voterLength: 100,
