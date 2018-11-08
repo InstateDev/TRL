@@ -60,6 +60,7 @@ jobs:
         - npm install
       script:
         #- truffle migrate --reset --network rinkeby_infura
+	- rm -r build
         - truffle migrate --reset --network rinkeby_frontier
         - truffle networks > truffle-logs.txt
         - npx semantic-release --dry-run --no-ci > semantic-release-logs.txt
