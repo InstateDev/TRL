@@ -1,23 +1,35 @@
+/* global artifacts contract before web3 describe assert describe assert it  */
 const config = require('../config')
+const moment = require('moment')
 const advanceToBlock = require('../test/helpers/advanceToBlock')
+const time = require('../contracts/cron/test/helpers/time')
 const { assertRevert } = require('../test/helpers/assertRevert')
 const Standard20TokenMock = artifacts.require('Standard20TokenMock')
 const TRLContract = artifacts.require('TRL')
 const Proxy = artifacts.require('Proxy')
 const PeriodicStageContract = artifacts.require('PeriodicStages')
-const PeriodContract = artifacts.require('Period')
+const PeriodContract = artifacts.require('Daily')
 const OwnedRegistryContract = artifacts.require('OwnedRegistry')
 const OwnedRegistryFactory = artifacts.require('OwnedRegistryFactory')
+const VaultContract = artifacts.require('Vault')
+const AllowanceContract = artifacts.require('Allowance')
+const HelenaFeeContract = artifacts.require('helenaAgent')
+const VoteTokenContract =  artifacts.require('VoteToken')
+const BankContract = artifacts.require('Bank')
 const keccak256 = require('js-sha3').keccak256
+
 
 let OwnedRegistryFactoryInstance
 let FrontierTokenInstance
 let TRLInstance
 let ProxyInstance
-let periodicStagesAddress
+let VoteTokenInstance
 let PeriodInstance
-let PeriodicStagesInstance
 let periodAddress
+let vaultInstance
+let allowanceInstance
+let helenaFeeInstance
+let bankInstance
 
 let adminAccount = web3.eth.accounts[0]
 let voterAccounts = web3.eth.accounts.slice(1, 4)
@@ -31,12 +43,23 @@ contract('TRL<Migrations>', function (accounts) {
     // set up
     OwnedRegistryFactoryInstance = await OwnedRegistryFactory.deployed()
     FrontierTokenInstance = await Standard20TokenMock.deployed()
+    VoteTokenInstance = await VoteTokenContract.deployed()
+    PeriodInstance = await PeriodContract.deployed()
     ProxyInstance = await Proxy.deployed()
+    vaultInstance = await VaultContract.deployed()
+    allowanceInstance = await AllowanceContract.deployed()
+    bankInstance = await BankContract.deployed()
+    helenaFeeInstance = await HelenaFeeContract.deployed()
+
+
     TRLInstance = await TRLContract.at(ProxyInstance.address)
+    await TRLInstance.setVoteToken(VoteTokenInstance.address)
+    await VoteTokenInstance.transferOwnership(TRLInstance.address, {from: adminAccount})
     let candidateRegistryAddress = await TRLInstance.candidateRegistry.call()
     let voterRegistryAddress = await TRLInstance.voterRegistry.call()
     let CandidateRegistryInstance = await OwnedRegistryContract.at(candidateRegistryAddress)
     let VoterRegistryInstance = await OwnedRegistryContract.at(voterRegistryAddress)
+
 
     // whitelisting candidates
     for (let i = 0; i < candidateAccounts.length; i++) {
@@ -46,10 +69,8 @@ contract('TRL<Migrations>', function (accounts) {
     for (let i = 0; i < voterAccounts.length; i++) {
       await VoterRegistryInstance.whiteList(voterAccounts[i], {from: adminAccount})
     }
-    periodicStagesAddress = await TRLInstance.periodicStages.call()
-    PeriodicStagesInstance = await PeriodicStageContract.at(periodicStagesAddress)
-    periodAddress = await PeriodicStagesInstance.period.call()
-    PeriodInstance = await PeriodContract.at(periodAddress)
+    await TRLInstance.setPeriod(PeriodInstance.address)
+    await VoteTokenInstance.setPeriod(PeriodInstance.address)
   })
 
   // choose which tests to run
@@ -59,6 +80,7 @@ contract('TRL<Migrations>', function (accounts) {
     staking: true,
     voting: true,
     claiming: true,
+    payments: true,
     scoring: false // disabled because it conflicts with config.ttl
   }
 
@@ -104,31 +126,23 @@ contract('TRL<Migrations>', function (accounts) {
   if (runTests.movingPeriods) {
     describe('Moving periods', async () => {
       it('Should increase the period after advancing one period in blocks', async () => {
-        const initialPeriod = await TRLInstance.currentPeriod.call()
-        const periodsToAdvance = 1
-        await advanceToBlock.advanceToBlock(web3.eth.blockNumber + 1 * config.ttl)
-        const currentPeriod = await TRLInstance.currentPeriod.call()
-        assert.strictEqual(initialPeriod.toNumber() + periodsToAdvance, currentPeriod.toNumber())
+        const initialHeight = await TRLInstance.height.call()
+        const startTime = await web3.eth.getBlock(web3.eth.blockNumber).timestamp
+        const startTimeMoment = await moment.unix(startTime)
+        const timeAfter = moment(startTimeMoment).add(1, 'days')
+        await time.increaseTo(timeAfter.unix())
+        const finalHeight = await TRLInstance.height.call()
+        assert.strictEqual(initialHeight.toNumber() + 1, finalHeight.toNumber())
       })
 
-      it('Should increase the period N times after advancing N periods in blocks', async () => {
-        const initialPeriod = await TRLInstance.currentPeriod.call()
-        const periodsToAdvance = 2
-        let currBlockNumber = web3.eth.blockNumber
-        await advanceToBlock.advanceToBlock(currBlockNumber + periodsToAdvance * config.ttl)
-        const currentPeriod = await TRLInstance.currentPeriod.call()
-        assert.strictEqual(initialPeriod.toNumber() + periodsToAdvance, currentPeriod.toNumber())
-      })
-      it('Should increase the stage after moving to the stage position inside the period', async () => {
-        const T = config.ttl
-        const indexInsideStage = await PeriodInstance.getRelativeIndex()
-        const neededIndexInStage = config.activeTime + 1
-        const blocksToAdvance = T - indexInsideStage.toNumber() + neededIndexInStage
-        let currBlockNumber = web3.eth.blockNumber
-        await advanceToBlock.advanceToBlock(currBlockNumber + blocksToAdvance)
-        const newIndexInsideStage = await PeriodInstance.getRelativeIndex()
-        const currentStage = await PeriodicStagesInstance.currentStage.call()
-        assert.strictEqual(1, currentStage.toNumber())
+      it('Should increase the period after advancing one period in blocks', async () => {
+        const initialHeight = await TRLInstance.height.call()
+        const startTime = await web3.eth.getBlock(web3.eth.blockNumber).timestamp
+        const startTimeMoment = await moment.unix(startTime)
+        const timeAfter = moment(startTimeMoment).add(2, 'days')
+        await time.increaseTo(timeAfter.unix())
+        const finalHeight = await TRLInstance.height.call()
+        assert.strictEqual(initialHeight.toNumber() + 2, finalHeight.toNumber())
       })
     })
   }
@@ -148,6 +162,7 @@ contract('TRL<Migrations>', function (accounts) {
         const storedMinimumStake = await TRLInstance.stakingConstraints.call(0)
         assert.equal(definedMinimumStake, storedMinimumStake.toNumber())
       })
+
       it('Should edit the maximum stake amount', async () => {
         const definedMaximumStake = 1000
         await TRLInstance.setMaximumStake(definedMaximumStake)
@@ -160,6 +175,7 @@ contract('TRL<Migrations>', function (accounts) {
         await FrontierTokenInstance.approve(TRLInstance.address, definedMinimumStake - 1, {from: voterAccounts[0]})
         await assertRevert(TRLInstance.buyTokenVotes(definedMinimumStake - 1, {from: voterAccounts[0]}))
       })
+
       it('Should record the number of votes bought in period 0 on the first period', async () => {
         const listAddress = await TRLInstance.address
         const stakedTokens = 20
@@ -167,7 +183,7 @@ contract('TRL<Migrations>', function (accounts) {
         const totalPreStaked = await FrontierTokenInstance.allowance.call(voterAccounts[0], listAddress)
         const currentPeriod = await TRLInstance.currentPeriod.call()
         await TRLInstance.buyTokenVotes(totalPreStaked, {from: voterAccounts[0]})
-        const votingBalance = await TRLInstance.votesBalance.call(currentPeriod, voterAccounts[0])
+        const votingBalance = await VoteTokenInstance.balanceOf.call(voterAccounts[0])
         assert.equal(totalPreStaked, votingBalance.toNumber())
       })
     })
@@ -179,11 +195,11 @@ contract('TRL<Migrations>', function (accounts) {
         const stakedTokens = 10
         await FrontierTokenInstance.approve(listAddress, stakedTokens, {from: voterAccounts[0]})
         const totalPreStaked = await FrontierTokenInstance.allowance.call(voterAccounts[0], listAddress)
-        const currentPeriod = await TRLInstance.currentPeriod.call()
+        const currentPeriod = await TRLInstance.height.call()
         await TRLInstance.buyTokenVotes(totalPreStaked, {from: voterAccounts[0]})
-        const votingBalance = await TRLInstance.votesBalance.call(currentPeriod, voterAccounts[0])
+        const votingBalance = await VoteTokenInstance.balanceOf.call(voterAccounts[0])
         await TRLInstance.vote(candidateAccounts[0], votingBalance, {from: voterAccounts[0]})
-        const votesReceived = await TRLInstance.votesReceived.call(currentPeriod, candidateAccounts[0])
+        const votesReceived = await VoteTokenInstance.balanceOf.call(candidateAccounts[0])
         assert.equal(votingBalance.toNumber(), votesReceived.toNumber())
       })
       it('Should edit the maximum number of votes when admin requires for it', async () => {
@@ -200,7 +216,33 @@ contract('TRL<Migrations>', function (accounts) {
       })
     })
   }
- 
+
+  if (runTests.payments) {
+    describe('Payments', async () => {
+      it('Should make the payment', async() => {
+        const fundingValue = 10
+
+        const receiver = candidateAccounts[1]
+        const period = 0
+        const owner = adminAccount
+
+        await FrontierTokenInstance.approve(vaultInstance.address, fundingValue, { from: voterAccounts[0]})
+
+        await vaultInstance.deposit(0, FrontierTokenInstance.address, voterAccounts[0], fundingValue, { from: voterAccounts[0] })
+        await vaultInstance.close(0, FrontierTokenInstance.address)
+
+        await allowanceInstance.addEntity(helenaFeeInstance.address, 'Helena-fee', 100, period)
+        await helenaFeeInstance.addAllowedReceiver(receiver, FrontierTokenInstance.address, { from: owner })
+
+        await bankInstance.setBalancesForEntities([helenaFeeInstance.address], FrontierTokenInstance.address, period)
+        await vaultInstance.setBankContractAddress(bankInstance.address, { from: owner })
+
+        await helenaFeeInstance.collectPayment(receiver, FrontierTokenInstance.address, period)
+        const receiverBalance = await FrontierTokenInstance.balanceOf(receiver)
+        assert.equal(receiverBalance, fundingValue)
+      })
+    })
+  }
 
   if (runTests.scoring) {
     describe('Reputation', async () => {
@@ -244,8 +286,6 @@ contract('TRL<Migrations>', function (accounts) {
         let actualAnalyst1LastPeriodScoreLin = await TRLInstance.weightedScore(linWeights, analyst1Scores, WINDOW_SIZE)
         actualAnalyst1LastPeriodScoreLin = Number((actualAnalyst1LastPeriodScoreLin / MUL_CONSTANT).toFixed(4))
         assert.equal(expectedAnalyst1LastPeriodScoreLin, actualAnalyst1LastPeriodScoreLin)
-
-        // assert.equal(0, score)
       })
 
       it('The WeightedScore pure function should yeld correct values when the window size is smaller', async () => {
@@ -257,20 +297,14 @@ contract('TRL<Migrations>', function (accounts) {
       it('The reputation function should calculate the correct reputation value for a user', async () => {
         const rep1ExpectedResult = 52800000000
         const listAddress = await TRLInstance.address
+
         await FrontierTokenInstance.approve(listAddress, 400, {from: voterAccounts[0]})
 
-        // clear stage
         let currentPeriod
         for (let i = 0; i < 5; i++) {
-          // advance until stage 0
-
           const totalPreStaked = await FrontierTokenInstance.allowance.call(voterAccounts[0], listAddress)
-          console.log('-> Staked' + totalPreStaked)
-
           currentPeriod = await TRLInstance.currentPeriod.call()
-          console.log('--> Stage:' + await TRLInstance.currentStage.call())
           await TRLInstance.buyTokenVotes(70, {from: voterAccounts[0]})
-          console.log('--> Stage:' + await TRLInstance.currentStage.call())
           await TRLInstance.vote(candidateAccounts[0], votesRecord[i], {from: voterAccounts[0]})
           await advanceToBlock.advanceToBlock(web3.eth.blockNumber + 1 * config.ttl)
         }

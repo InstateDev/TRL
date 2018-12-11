@@ -9,7 +9,8 @@ services:
 stages:
   - name: test
   - name: migrate
-    if: type != pull_request AND (branch = develop OR branch = master)
+    if: type != pull_request AND (branch = master OR branch = develop)
+
 
 jobs:
   include:
@@ -20,6 +21,8 @@ jobs:
       before_install:
         - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
         - npm i npm@latest -g
+        - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+        - git submodule update --init --recursive
       install:
         - npm install -g ganache-cli
         - npm install
@@ -70,6 +73,9 @@ jobs:
         - export SUBSCRIPTION_ADDR=$((grep Subscription truffle-logs.txt | cut -d ":" -f2) | awk '{print $1}')
         - export TRL_ADDR=$((grep TRL truffle-logs.txt | cut -d ":" -f2) | awk '{print $1}')
         - export TRL_VERSION=$(grep "The next release version is" semantic-release-logs.txt | cut -d " " -f11)
+        - export HELENA_AGENT_ADDR=$((grep helenaAgent truffle-logs.txt | cut -d ":" -f2) | awk '{print $1}')
+        - export BANK_ADDR=$((grep Bank truffle-logs.txt | cut -d ":" -f2) | awk '{print $1}')
+        - export ALLOWANCE_ADDR=$((grep Allowance truffle-logs.txt | cut -d ":" -f2) | awk '{print $1}')
         - cd scripts && node updateContractManager.js && cd ..
         - echo "Updated the contract manager"
         - echo "- TRL_VERSION"
@@ -86,5 +92,11 @@ jobs:
         - echo $REGISTRY_FACTORY_ADDR
         - echo "- VAULT_ADDR"
         - echo $VAULT_ADDR
+        - echo "- HELENA_AGENT_ADDR"
+        - echo $HELENA_AGENT_ADDR
+        - echo "- BANK_ADDR"
+        - echo $BANK_ADDR
+        - echo "- ALLOWANCE_ADDR"
+        - echo $ALLOWANCE_ADDR
       after_script:
         - npx semantic-release
