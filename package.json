@@ -27,6 +27,9 @@
     "type": "git",
     "url": "git+https://github.com/Frontier-project/FrontierLists.git"
   },
+  "release": { 
+    "branch": "develop" 
+  },
   "keywords": [
     "lists",
     "token",
