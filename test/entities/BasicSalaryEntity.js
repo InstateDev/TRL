@@ -1,10 +1,7 @@
-/* global artifacts contract web3 before beforeEach it assert */
+/* global artifacts contract web3 before beforeEach it assert describe */
 const config = require('../../config')
-const advanceToBlock = require('../helpers/advanceToBlock')
-const { assertRevert } = require('../helpers/assertRevert')
 const Standard20TokenMock = artifacts.require('Standard20TokenMock')
 const TRLContract = artifacts.require('TRL')
-const PeriodicStageContract = artifacts.require('PeriodicStages')
 const PeriodContract = artifacts.require('PeriodMock')
 const VaultContract = artifacts.require('Vault')
 const OwnedRegistryContract = artifacts.require('OwnedRegistryMock')
@@ -12,35 +9,33 @@ const OwnedRegistryContract = artifacts.require('OwnedRegistryMock')
 // Payments
 const BankContract = artifacts.require('Bank')
 const AllowanceContract = artifacts.require('Allowance')
-const HelenaFeeContract = artifacts.require('helenaAgent')
 const BasicSalaryEntityContract = artifacts.require('BasicSalaryEntity')
 
 contract('BasicSalary', function (accounts) {
+  // Accounts
+  const adminAccount = web3.eth.accounts[0]
+  const voterAccounts = web3.eth.accounts.slice(1, 4)
+  const candidateAccounts = web3.eth.accounts.slice(5, 8)
+  const owner = web3.eth.accounts[0]
+
+  // Contracts
   let TRLInstance
   let FrontierTokenInstance
   let CandidateRegistryInstance
   let VoterRegistryInstance
-  let PeriodicStagesInstance
   let Vault
-  let adminAccount = web3.eth.accounts[0]
-  let voterAccounts = web3.eth.accounts.slice(1, 4)
-  let candidateAccounts = web3.eth.accounts.slice(5, 8)
   let PeriodInstance
-
+  let basicSalaryInstance
   let Allowance
   let Balance
-  const totalTokenIssuance = 100
 
+  // vars
+  const totalTokenIssuance = 100
   const percentageResolution = config.percentageResolution
   const entityPercentage = 100
   const entityPercentageMultiplied = entityPercentage * percentageResolution
-  const receiver = candidateAccounts[1]
-  const wrongReceiver = candidateAccounts[2]
 
   let period = 0
-
-  let basicSalaryInstance
-  const owner = web3.eth.accounts[0]
 
   before('Deploying required contracts', async () => {
     PeriodInstance = await PeriodContract.new()
