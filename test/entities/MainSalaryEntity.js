@@ -1,10 +1,11 @@
 /* global artifacts contract web3 before beforeEach it assert */
-const config = require('../../config')
+const config = require('../../config.js')
+const Utils = require('../helpers/utils.js')
 const advanceToBlock = require('../helpers/advanceToBlock')
 const { assertRevert } = require('../helpers/assertRevert')
 const Standard20TokenMock = artifacts.require('Standard20TokenMock')
-// const TRLContract = artifacts.require('TRL')
-const TRLContract = artifacts.require('TRLMock')
+const TRLContract = artifacts.require('TRL')
+// const TRLContract = artifacts.require('TRLMock')
 const PeriodicStageContract = artifacts.require('PeriodicStages')
 const PeriodContract = artifacts.require('PeriodMock')
 const VaultContract = artifacts.require('Vault')
@@ -52,11 +53,12 @@ contract('MainSalaryEntity', function (accounts) {
   const owner = web3.eth.accounts[0]
 
   before('Deploying required contracts', async () => {
-    CandidateRegistryInstance = await OwnedRegistryContract.new(candidateAccounts, {from: adminAccount})
-    VoterRegistryInstance = await OwnedRegistryContract.new(voterAccounts, {from: adminAccount})
+
   })
   beforeEach(async () => {
     PeriodInstance = await PeriodContract.new()
+    CandidateRegistryInstance = await OwnedRegistryContract.new(candidateAccounts, PeriodInstance.address, {from: adminAccount})
+    VoterRegistryInstance = await OwnedRegistryContract.new(voterAccounts, PeriodInstance.address, {from: adminAccount})
     FrontierTokenInstance = await Standard20TokenMock.new(voterAccounts, config.totalTokens, {from: adminAccount})
     Vault = await VaultContract.new({from: adminAccount})
     VoteTokenInstance = await VoteTokenContract.new({from: adminAccount})
@@ -138,7 +140,7 @@ contract('MainSalaryEntity', function (accounts) {
       assert.equal(userVotes, voter2VotesCast)
 
       const expectedVotesCast = voter1VotesCast + voter2VotesCast
-      await TRLInstance.mock_next()
+      await Utils.advancePeriods(1, PeriodInstance, CandidateRegistryInstance)
       const actualVotesCast = await TRLInstance.getEpochTotalVotes(0)
 
       assert.equal(actualVotesCast, expectedVotesCast)
@@ -153,13 +155,7 @@ contract('MainSalaryEntity', function (accounts) {
       await TRLInstance.vote(candidateAccounts[0], voter1VotesCast, { from: voterAccounts[0] })
       await TRLInstance.vote(candidateAccounts[1], voter1VotesCast, { from: voterAccounts[1] })
 
-      await TRLInstance.mock_next()
-
-      await CandidateRegistryInstance.debug_forceUpdate()
-      await CandidateRegistryInstance.next()
-      await CandidateRegistryInstance.debug_forceUpdate()
-      await CandidateRegistryInstance.next()
-      await CandidateRegistryInstance.debug_forceUpdate()
+      await Utils.advancePeriods(2, PeriodInstance, CandidateRegistryInstance)
 
       /*
         The problem in on the collectPayment function, in the
@@ -203,10 +199,8 @@ contract('MainSalaryEntity', function (accounts) {
       // Voting and  checking the user received the votes
       await TRLInstance.vote(candidateAccounts[0], voter1VotesCast, { from: voterAccounts[0] })
 
-      const periodsToAdvance = 12
-      for (let i = 0; i < periodsToAdvance; i++) {
-        await TRLInstance.mock_next()
-      }
+      const periodsToAdvance = 13
+      await Utils.advancePeriods(periodsToAdvance, PeriodInstance, CandidateRegistryInstance)
 
       await assertRevert(mainSalaryInstance.collectPayment(candidateAccounts[0], FrontierTokenInstance.address, 0))
     })
@@ -218,11 +212,7 @@ contract('MainSalaryEntity', function (accounts) {
       // Voting and  checking the user received the votes
       await TRLInstance.vote(candidateAccounts[0], voter1VotesCast, { from: voterAccounts[0] })
 
-      await CandidateRegistryInstance.debug_forceUpdate()
-      await CandidateRegistryInstance.next()
-      await CandidateRegistryInstance.debug_forceUpdate()
-      await CandidateRegistryInstance.next()
-      await CandidateRegistryInstance.debug_forceUpdate()
+      await Utils.advancePeriods(2, PeriodInstance, CandidateRegistryInstance)
 
       const invalidUser = adminAccount
 
@@ -238,13 +228,9 @@ contract('MainSalaryEntity', function (accounts) {
       await TRLInstance.vote(candidateAccounts[0], 40, { from: voterAccounts[0] })
       await TRLInstance.vote(candidateAccounts[1], 41, { from: voterAccounts[1] })
 
-      await TRLInstance.mock_next()
+      // await PeriodInstance.next()
 
-      await CandidateRegistryInstance.debug_forceUpdate()
-      await CandidateRegistryInstance.next()
-      await CandidateRegistryInstance.debug_forceUpdate()
-      await CandidateRegistryInstance.next()
-      await CandidateRegistryInstance.debug_forceUpdate()
+      await Utils.advancePeriods(2, PeriodInstance, CandidateRegistryInstance)
 
       /*
         The problem in on the collectPayment function, in the
@@ -278,17 +264,12 @@ contract('MainSalaryEntity', function (accounts) {
         const VaultBalance = await FrontierTokenInstance.balanceOf(Vault.address)
         let userBalance = await FrontierTokenInstance.balanceOf(candidateAccounts[1])
 
-        const votes = getRandomVotes(totalVotesBought)
+        const votes = Utils.getRandomVotes(totalVotesBought)
         // Voting and  checking the user received the votes
         await TRLInstance.vote(candidateAccounts[0], votes[0], { from: voterAccounts[0] })
         await TRLInstance.vote(candidateAccounts[1], votes[1], { from: voterAccounts[1] })
 
-        await TRLInstance.mock_next()
-        await CandidateRegistryInstance.debug_forceUpdate()
-        await CandidateRegistryInstance.next()
-        await CandidateRegistryInstance.debug_forceUpdate()
-        await CandidateRegistryInstance.next()
-        await CandidateRegistryInstance.debug_forceUpdate()
+        await Utils.advancePeriods(2, PeriodInstance, CandidateRegistryInstance)
 
         await mainSalaryInstance.collectPayment(candidateAccounts[0], FrontierTokenInstance.address, 0)
         await mainSalaryInstance.collectPayment(candidateAccounts[1], FrontierTokenInstance.address, 0)
@@ -305,15 +286,6 @@ contract('MainSalaryEntity', function (accounts) {
     }
   })
 })
-
-function getRandomVotes (upperLimit) {
-  while (1) {
-    let a = Math.floor((Math.random() * upperLimit) + 1)
-    let b = Math.floor((Math.random() * upperLimit) + 1)
-
-    return [a, b]
-  }
-}
 
 function printLogs () {
   if (DEBUG_MODE) {

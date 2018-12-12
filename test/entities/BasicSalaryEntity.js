@@ -5,7 +5,7 @@ const { assertRevert } = require('../helpers/assertRevert')
 const Standard20TokenMock = artifacts.require('Standard20TokenMock')
 const TRLContract = artifacts.require('TRL')
 const PeriodicStageContract = artifacts.require('PeriodicStages')
-const PeriodContract = artifacts.require('Period')
+const PeriodContract = artifacts.require('PeriodMock')
 const VaultContract = artifacts.require('Vault')
 const OwnedRegistryContract = artifacts.require('OwnedRegistryMock')
 
@@ -43,8 +43,9 @@ contract('BasicSalary', function (accounts) {
   const owner = web3.eth.accounts[0]
 
   before('Deploying required contracts', async () => {
-    CandidateRegistryInstance = await OwnedRegistryContract.new(candidateAccounts, {from: adminAccount})
-    VoterRegistryInstance = await OwnedRegistryContract.new(voterAccounts, {from: adminAccount})
+    PeriodInstance = await PeriodContract.new()
+    CandidateRegistryInstance = await OwnedRegistryContract.new(candidateAccounts, PeriodInstance.address, {from: adminAccount})
+    VoterRegistryInstance = await OwnedRegistryContract.new(voterAccounts, PeriodInstance.address, {from: adminAccount})
   })
   beforeEach(async () => {
     FrontierTokenInstance = await Standard20TokenMock.new(voterAccounts, config.totalTokens, {from: adminAccount})
@@ -105,7 +106,6 @@ contract('BasicSalary', function (accounts) {
           period
           )
         receiverBalance = await FrontierTokenInstance.balanceOf(candidate)
-        console.log('Ac: ' + JSON.stringify(receiverBalance) + ' Ex: ' + expectedBalance)
         assert.equal(receiverBalance, expectedBalance)
       }
     })

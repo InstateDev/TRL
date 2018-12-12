@@ -2,9 +2,9 @@ const config = require('../config')
 const { assertRevert } = require('./helpers/assertRevert')
 const TRLContract = artifacts.require('TRL')
 const ProxyContract = artifacts.require('Proxy')
-const VoteTokenContract =  artifacts.require('VoteToken')
+const VoteTokenContract = artifacts.require('VoteToken')
 const Standard20TokenMock = artifacts.require('Standard20TokenMock')
-const PeriodContract = artifacts.require('PeriodMock');
+const PeriodContract = artifacts.require('PeriodMock')
 const VaultContract = artifacts.require('Vault')
 const OwnedRegistryContract = artifacts.require('OwnedRegistryMock')
 
@@ -32,18 +32,18 @@ contract('Reputation', function (accounts) {
 
   before('Deploying required contracts', async () => {
     FrontierTokenInstance = await Standard20TokenMock.new(voterAccounts, config.totalTokens, {from: adminAccount})
-    CandidateRegistryInstance = await OwnedRegistryContract.new(candidateAccounts, {from: adminAccount})
-    VoterRegistryInstance = await OwnedRegistryContract.new(voterAccounts, {from: adminAccount})
     Vault = await VaultContract.new({from: adminAccount})
   })
 
   beforeEach(async () => {
-    ProxyInstance = await ProxyContract.new({from:adminAccount})
+    PeriodInstance = await PeriodContract.new()
+    CandidateRegistryInstance = await OwnedRegistryContract.new(candidateAccounts, PeriodInstance.address, {from: adminAccount})
+    VoterRegistryInstance = await OwnedRegistryContract.new(voterAccounts, PeriodInstance.address, {from: adminAccount})
+    ProxyInstance = await ProxyContract.new({from: adminAccount})
     TRLInstance = await TRLContract.new({from: adminAccount})
     ProxyTRLInstance = await TRLContract.at(ProxyInstance.address)
     await ProxyInstance.setContractLogic(TRLInstance.address)
-    VoteTokenInstance = await VoteTokenContract.new({from:adminAccount})
-    PeriodInstance = await PeriodContract.new()
+    VoteTokenInstance = await VoteTokenContract.new({from: adminAccount})
 
     await ProxyTRLInstance.setCandidateRegistry(CandidateRegistryInstance.address)
     await ProxyTRLInstance.setVoterRegistry(VoterRegistryInstance.address)
@@ -58,7 +58,6 @@ contract('Reputation', function (accounts) {
     await ProxyTRLInstance.setVault(Vault.address)
 
     await ProxyTRLInstance.setPeriod(PeriodInstance.address)
-
   })
 
   const absLinWeights = [0.39999999999999997, 0.3, 0.19999999999999998, 0.10000000000000002, 0.0]
@@ -157,12 +156,12 @@ contract('Reputation', function (accounts) {
       await ProxyTRLInstance.setWindowSize(WINDOW_SIZE, {from: adminAccount})
       await ProxyTRLInstance.setReputationLinWeights(linWeightsSmaller, {from: adminAccount})
 
-       for (let i = 0; i < 5; i++) {
-          await ProxyTRLInstance.buyTokenVotes(votesRecord[i], {from: voterAccounts[0]})
-          await ProxyTRLInstance.vote(candidateAccounts[0], votesRecord[i], {from: voterAccounts[0]})
-          epoch = await ProxyTRLInstance.height.call()
-          TRLScoring = await ProxyTRLInstance.scoring.call(epoch, candidateAccounts[0])
-          await PeriodInstance.next();
+      for (let i = 0; i < 5; i++) {
+        await ProxyTRLInstance.buyTokenVotes(votesRecord[i], {from: voterAccounts[0]})
+        await ProxyTRLInstance.vote(candidateAccounts[0], votesRecord[i], {from: voterAccounts[0]})
+        epoch = await ProxyTRLInstance.height.call()
+        TRLScoring = await ProxyTRLInstance.scoring.call(epoch, candidateAccounts[0])
+        await PeriodInstance.next()
       }
 
       let res = await ProxyTRLInstance.reputation(epoch, candidateAccounts[0])
@@ -178,7 +177,7 @@ contract('Reputation', function (accounts) {
         await ProxyTRLInstance.vote(candidateAccounts[0], votesRecord[i], {from: voterAccounts[0]})
         epoch = await ProxyTRLInstance.height.call()
         TRLScoring = await ProxyTRLInstance.scoring.call(epoch, candidateAccounts[0])
-        await PeriodInstance.next();
+        await PeriodInstance.next()
       }
       await assertRevert(ProxyTRLInstance.reputation(epoch, candidateAccounts[0]))
     })

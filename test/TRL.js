@@ -25,11 +25,11 @@ contract('TRL', function (accounts) {
   let candidateAccounts = web3.eth.accounts.slice(5, 8)
 
   before('Deploying required contracts', async () => {
-    FrontierTokenInstance = await Standard20TokenMock.new(voterAccounts, config.totalTokens, {from: adminAccount})
-    CandidateRegistryInstance = await OwnedRegistryContract.new(candidateAccounts, {from: adminAccount})
-    VoterRegistryInstance = await OwnedRegistryContract.new(voterAccounts, {from: adminAccount})
-    Vault = await VaultContract.new({from: adminAccount})
     PeriodInstance = await PeriodContract.new()
+    FrontierTokenInstance = await Standard20TokenMock.new(voterAccounts, config.totalTokens, {from: adminAccount})
+    CandidateRegistryInstance = await OwnedRegistryContract.new(candidateAccounts, PeriodInstance.address, {from: adminAccount})
+    VoterRegistryInstance = await OwnedRegistryContract.new(voterAccounts, PeriodInstance.address, {from: adminAccount})
+    Vault = await VaultContract.new({from: adminAccount})
   })
   beforeEach(async () => {
     VoteTokenInstance = await VoteTokenContract.new({from: adminAccount})
@@ -145,7 +145,6 @@ contract('TRL', function (accounts) {
       await FrontierTokenInstance.approve(listAddress, stakedTokens, {from: voterAccounts[0]})
       await TRLInstance.buyTokenVotes(stakedTokens, {from: voterAccounts[0]})
       await TRLInstance.vote(candidateAccounts[0], stakedTokens, {from: voterAccounts[0]})
-      console.log('---> PASSED')
       const votesReceived = await VoteTokenInstance.balanceOf(candidateAccounts[0])
 
       assert.equal(true, true)
