@@ -1,4 +1,4 @@
-const ContractManager = require('contract-manager-client')
+const ContractManager = require('@frontier-token-research/contract-manager-client')
 const TRL_VERSION = process.env.TRL_VERSION
 
 let updates = []
