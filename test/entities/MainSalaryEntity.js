@@ -5,7 +5,6 @@ const advanceToBlock = require('../helpers/advanceToBlock')
 const { assertRevert } = require('../helpers/assertRevert')
 const Standard20TokenMock = artifacts.require('Standard20TokenMock')
 const TRLContract = artifacts.require('TRL')
-// const TRLContract = artifacts.require('TRLMock')
 const PeriodicStageContract = artifacts.require('PeriodicStages')
 const PeriodContract = artifacts.require('PeriodMock')
 const VaultContract = artifacts.require('Vault')
@@ -19,38 +18,34 @@ const HelenaFeeContract = artifacts.require('helenaAgent')
 const MainSalaryEntityContract = artifacts.require('MainSalaryEntity')
 
 // When DEBUG_MODE=true, the logs are printed.
-
 const DEBUG_MODE = false
 
 contract('MainSalaryEntity', function (accounts) {
+  // Accounts
+  const adminAccount = web3.eth.accounts[0]
+  const voterAccounts = web3.eth.accounts.slice(1, 4)
+  const candidateAccounts = web3.eth.accounts.slice(5, 8)
+  const owner = web3.eth.accounts[0]
+
+  // Contract instances
   let TRLInstance
   let FrontierTokenInstance
   let CandidateRegistryInstance
   let VoterRegistryInstance
-  let PeriodicStagesInstance
   let Vault
-  let adminAccount = web3.eth.accounts[0]
-  let voterAccounts = web3.eth.accounts.slice(1, 4)
-  let candidateAccounts = web3.eth.accounts.slice(5, 8)
   let PeriodInstance
   let VoteTokenInstance
-
   let Allowance
   let Balance
-  const totalTokenIssuance = 100
+  let mainSalaryInstance
 
+  // Variables
+  const totalTokenIssuance = 100
   const percentageResolution = config.percentageResolution
   const entityPercentage = 100
   const entityPercentageMultiplied = entityPercentage * percentageResolution
-  const receiver = candidateAccounts[1]
-  const wrongReceiver = candidateAccounts[2]
-
   let totalVotesBought = 100
-
   let period = 0
-
-  let mainSalaryInstance
-  const owner = web3.eth.accounts[0]
 
   before('Deploying required contracts', async () => {
 
@@ -72,12 +67,6 @@ contract('MainSalaryEntity', function (accounts) {
     await TRLInstance.setVault(Vault.address)
     await TRLInstance.setPeriod(PeriodInstance.address)
     await VoteTokenInstance.setPeriod(PeriodInstance.address)
-    // await TRLInstance.initPeriod(config.ttl)
-    // await TRLInstance.initStages(config.activeTime, config.claimTime)
-    // let periodicStagesAddress = await TRLInstance.periodicStages.call()
-    // PeriodicStagesInstance = await PeriodicStageContract.at(periodicStagesAddress)
-    // let periodAddress = await PeriodicStagesInstance.period.call()
-    // PeriodInstance = await PeriodContract.at(periodAddress)
 
     // Aproving and buying votes
     await FrontierTokenInstance.approve(TRLInstance.address, totalVotesBought, {from: voterAccounts[0]})
@@ -157,19 +146,6 @@ contract('MainSalaryEntity', function (accounts) {
 
       await Utils.advancePeriods(2, PeriodInstance, CandidateRegistryInstance)
 
-      /*
-        The problem in on the collectPayment function, in the
-        require(candidateRegistry.wasWhitelisted(_destination,_epoch));
-        It probably has something to do with the archive. Some debug ideas are:
-          - check that the period in the candidate registry is actually moving
-          - use the registry debug functions to see if the user is being whitelisted
-              - Maybe the initial whitelisting function did not even work?
-
-          - TODO: Get all height() requests from IPeriod. Mock IPeriod to include the nextPeriod() function.
-          - TODO: Make the pure function to calculate the absolute number of tokens based on the number of votes.
-
-      */
-
       await mainSalaryInstance.collectPayment(candidateAccounts[0], FrontierTokenInstance.address, 0)
       await mainSalaryInstance.collectPayment(candidateAccounts[1], FrontierTokenInstance.address, 0)
 
@@ -181,9 +157,6 @@ contract('MainSalaryEntity', function (accounts) {
     })
 
     it('Should fail when collecting payment from current period', async () => {
-      const VaultBalance = await FrontierTokenInstance.balanceOf(Vault.address)
-      let userBalance = await FrontierTokenInstance.balanceOf(candidateAccounts[1])
-
       const voter1VotesCast = totalVotesBought
       // Voting and  checking the user received the votes
       await TRLInstance.vote(candidateAccounts[0], voter1VotesCast, { from: voterAccounts[0] })
@@ -192,16 +165,12 @@ contract('MainSalaryEntity', function (accounts) {
     })
 
     it('Should fail when collecting payment past the period limit (12 periods)', async () => {
-      const VaultBalance = await FrontierTokenInstance.balanceOf(Vault.address)
-      let userBalance = await FrontierTokenInstance.balanceOf(candidateAccounts[1])
-
       const voter1VotesCast = totalVotesBought
       // Voting and  checking the user received the votes
       await TRLInstance.vote(candidateAccounts[0], voter1VotesCast, { from: voterAccounts[0] })
 
-      const periodsToAdvance = 13
+      const periodsToAdvance = 12
       await Utils.advancePeriods(periodsToAdvance, PeriodInstance, CandidateRegistryInstance)
-
       await assertRevert(mainSalaryInstance.collectPayment(candidateAccounts[0], FrontierTokenInstance.address, 0))
     })
 
@@ -213,37 +182,19 @@ contract('MainSalaryEntity', function (accounts) {
       await TRLInstance.vote(candidateAccounts[0], voter1VotesCast, { from: voterAccounts[0] })
 
       await Utils.advancePeriods(2, PeriodInstance, CandidateRegistryInstance)
-
       const invalidUser = adminAccount
-
       await assertRevert(mainSalaryInstance.collectPayment(invalidUser, FrontierTokenInstance.address, 0))
     })
 
     it('Transfer the correct to 2 users', async () => {
       const VaultBalance = await FrontierTokenInstance.balanceOf(Vault.address)
-      let userBalance = await FrontierTokenInstance.balanceOf(candidateAccounts[1])
 
-      const voter1VotesCast = totalVotesBought
+      const voter1VotesCast = 40
+      const voter2VotesCast = 41
       // Voting and  checking the user received the votes
-      await TRLInstance.vote(candidateAccounts[0], 40, { from: voterAccounts[0] })
-      await TRLInstance.vote(candidateAccounts[1], 41, { from: voterAccounts[1] })
-
-      // await PeriodInstance.next()
-
+      await TRLInstance.vote(candidateAccounts[0], voter1VotesCast, { from: voterAccounts[0] })
+      await TRLInstance.vote(candidateAccounts[1], voter2VotesCast, { from: voterAccounts[1] })
       await Utils.advancePeriods(2, PeriodInstance, CandidateRegistryInstance)
-
-      /*
-        The problem in on the collectPayment function, in the
-        require(candidateRegistry.wasWhitelisted(_destination,_epoch));
-        It probably has something to do with the archive. Some debug ideas are:
-          - check that the period in the candidate registry is actually moving
-          - use the registry debug functions to see if the user is being whitelisted
-              - Maybe the initial whitelisting function did not even work?
-
-          - TODO: Get all height() requests from IPeriod. Mock IPeriod to include the nextPeriod() function.
-          - TODO: Make the pure function to calculate the absolute number of tokens based on the number of votes.
-
-      */
 
       await mainSalaryInstance.collectPayment(candidateAccounts[0], FrontierTokenInstance.address, 0)
       await mainSalaryInstance.collectPayment(candidateAccounts[1], FrontierTokenInstance.address, 0)
