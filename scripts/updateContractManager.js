@@ -1,47 +1,65 @@
 const ContractManager = require('contract-manager-client')
-const TRL_VERSION = process.env.TRL_VERSION
+const testFolder = '../build/contracts'
+const fs = require('fs')
+const VERSION = getVersion()
 
+let imports = []
 let updates = []
 
-const TRL_PROXY_ADDR = process.env.PROXY_ADDR
-const TRL_ABI = require('../build/contracts/TRL.json')
-updates.push({name: 'trl', address: TRL_PROXY_ADDR, abi: TRL_ABI})
+fs.readdirSync(testFolder).forEach(file => {
+  // console.log(file)
+  imports.push(require(testFolder + '/' + file))
+})
 
-const SUBSCRIPTION_ADDR = process.env.SUBSCRIPTION_ADDR
-const SUBSCRIPTION_ABI = require('../build/contracts/Subscription.json')
-updates.push({name: 'subscription', address: SUBSCRIPTION_ADDR, abi: SUBSCRIPTION_ABI})
+// console.log(getVersion())
 
-const TOKEN_ADDR = process.env.TOKEN_ADDR
-const TOKEN_ABI = require('../build/contracts/Standard20TokenMock.json')
-updates.push({name: 'token', address: TOKEN_ADDR, abi: TOKEN_ABI})
+for (let contract of imports) {
+  let contractNetworks = contract.networks
+  let networkKeys = Object.keys(contractNetworks)
 
-const REGISTRY_FACTORY_ADDR = process.env.REGISTRY_FACTORY_ADDR
-const REGISTRY_FACTORY_ABI = require('../build/contracts/OwnedRegistryFactory.json')
-updates.push({name: 'registry-factory', address: REGISTRY_FACTORY_ADDR, abi: REGISTRY_FACTORY_ABI})
+  if (networkKeys.length == 1) {
+    const updateItem = {
+    	name: contract.contractName,
+    	address: contract.networks[networkKeys[0]].address,
+    	abi: contract,
+    	version: VERSION
+    }
+    updates.push(updateItem)
+  }
 
-const VAULT_ADDR = process.env.VAULT_ADDR
-const VAULT_ABI = require('../build/contracts/Vault.json')
-updates.push({name: 'vault', address: VAULT_ADDR, abi: VAULT_ABI})
+  if (networkKeys.length > 1) {
+  	throw 'More than 1 network defined on contract:' + contract.contractName
+  }
+}
 
-const ALLOWANCE_ADDR = process.env.ALLOWANCE_ADDR
-const ALLOWANCE_ABI = require('../build/contracts/Allowance.json')
-updates.push({name: 'allowance', address: ALLOWANCE_ADDR, abi: ALLOWANCE_ABI})
+function getVersion () {
+  let TRL_VERSION = process.env.TRL_VERSION
 
-const BANK_ADDR = process.env.BANK_ADDR
-const BANK_ABI = require('../build/contracts/Bank.json')
-updates.push({name: 'bank', address: BANK_ADDR, abi: BANK_ABI})
+  if (typeof TRL_VERSION !== 'undefined' && TRL_VERSION) {
+  	if (TRL_VERSION.indexOf('.') > -1) {
+  		return TRL_VERSION
+  	}  	else {
+    	return '0.0.0-' + getTimestamp()
+  	}
+  } else {
+    return '0.0.0-' + getTimestamp()
+  }
+}
 
-const HELENA_AGENT_ADDR = process.env.HELENA_AGENT_ADDR
-const HELENA_AGENT_ABI = require('../build/contracts/helenaAgent.json')
-updates.push({name: 'helena-agent', address: HELENA_AGENT_ADDR, abi: HELENA_AGENT_ABI})
+function getTimestamp () {
+  return Date.now() / 1000 | 0
+}
 
 async function updateContractManager (updates) {
   for (let update of updates) {
-    let updateState = await ContractManager.updateContract(update.name, TRL_VERSION, update.abi, update.address)
+    let updateState = await ContractManager.updateContract(update.name, update.version, update.abi, update.address)
     console.log('Updated ' + update.name + ' -> ' + updateState)
   }
 }
-if (process.env.VAULT_ADDR && process.env.REGISTRY_FACTORY_ADDR && process.env.TOKEN_ADDR && process.env.SUBSCRIPTION_ADDR && process.env.PROXY_ADDR) {
+
+// Main flow
+
+if (true) {
   updateContractManager(updates)
 } else {
   console.log('Env variables not set')

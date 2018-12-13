@@ -62,40 +62,10 @@ jobs:
         - npm install
       script:
         #- truffle migrate --reset --network rinkeby_infura
+        - rm -r build
         - truffle migrate --reset --network rinkeby_frontier
-        - truffle networks > truffle-logs.txt
         - npx semantic-release --dry-run --no-ci > semantic-release-logs.txt
-        - export VAULT_ADDR=$((grep Vault truffle-logs.txt | cut -d ":" -f2) | awk '{print $1}')
-        - export REGISTRY_FACTORY_ADDR=$((grep OwnedRegistryFactory truffle-logs.txt | cut -d ":" -f2) | awk '{print $1}')
-        - export PROXY_ADDR=$((grep Proxy truffle-logs.txt | cut -d ":" -f2) | awk '{print $1}')
-        - export TOKEN_ADDR=$((grep Standard20TokenMock truffle-logs.txt | cut -d ":" -f2) | awk '{print $1}')
-        - export SUBSCRIPTION_ADDR=$((grep Subscription truffle-logs.txt | cut -d ":" -f2) | awk '{print $1}')
-        - export TRL_ADDR=$((grep TRL truffle-logs.txt | cut -d ":" -f2) | awk '{print $1}')
         - export TRL_VERSION=$(grep "The next release version is" semantic-release-logs.txt | cut -d " " -f11)
-        - export HELENA_AGENT_ADDR=$((grep helenaAgent truffle-logs.txt | cut -d ":" -f2) | awk '{print $1}')
-        - export BANK_ADDR=$((grep Bank truffle-logs.txt | cut -d ":" -f2) | awk '{print $1}')
-        - export ALLOWANCE_ADDR=$((grep Allowance truffle-logs.txt | cut -d ":" -f2) | awk '{print $1}')
         - cd scripts && node updateContractManager.js && cd ..
-        - echo "Updated the contract manager"
-        - echo "- TRL_VERSION"
-        - echo $TRL_VERSION
-        - echo "- TRL_ADDR"
-        - echo $TRL_ADDR
-        - echo "- SUBSCRIPTION_ADDR"
-        - echo $SUBSCRIPTION_ADDR
-        - echo "- TOKEN_ADDR"
-        - echo $TOKEN_ADDR
-        - echo "- PROXY_ADDR"
-        - echo $PROXY_ADDR
-        - echo "- REGISTRY_FACTORY_ADDR"
-        - echo $REGISTRY_FACTORY_ADDR
-        - echo "- VAULT_ADDR"
-        - echo $VAULT_ADDR
-        - echo "- HELENA_AGENT_ADDR"
-        - echo $HELENA_AGENT_ADDR
-        - echo "- BANK_ADDR"
-        - echo $BANK_ADDR
-        - echo "- ALLOWANCE_ADDR"
-        - echo $ALLOWANCE_ADDR
       after_script:
         - npx semantic-release
