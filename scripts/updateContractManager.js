@@ -1,4 +1,4 @@
-const ContractManager = require('contract-manager-client')
+const ContractManager = require('@frontier-token-research/contract-manager-client')
 const testFolder = '../build/contracts'
 const fs = require('fs')
 const VERSION = getVersion()
