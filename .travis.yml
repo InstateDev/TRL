@@ -65,8 +65,6 @@ jobs:
         #- truffle migrate --reset --network rinkeby_infura
         - rm -r build
         - truffle migrate --reset --network rinkeby_frontier
-        - npx semantic-release --dry-run --no-ci > semantic-release-logs.txt
-        - export TRL_VERSION=$(grep "The next release version is" semantic-release-logs.txt | cut -d " " -f11)
-        - cd scripts && node updateContractManager.js && cd ..
+        - node node_modules/@frontier-token-research/contract-manager-client/cli.js -d $TRAVIS_BUILD_DIR  -t $TRAVIS_BRANCH -b $TRAVIS_BRANCH  -g "https://github.com/Frontier-project/TRL.git"
       after_script:
         - npx semantic-release

@@ -27,8 +27,8 @@
     "type": "git",
     "url": "git+https://github.com/Frontier-project/FrontierLists.git"
   },
-  "release": { 
-    "branch": "develop" 
+  "release": {
+    "branch": "develop"
   },
   "keywords": [
     "lists",
@@ -61,9 +61,9 @@
     "solidity-metadata-uploader": "0.0.1"
   },
   "dependencies": {
+    "@frontier-token-research/contract-manager-client": "0.0.2-dev",
     "@frontier-token-research/cron": "dev",
     "@frontier-token-research/role-registries": "^1.0.6",
-    "@frontier-token-research/contract-manager-client": "dev",
     "bs58": "^4.0.1",
     "dotenv": "^5.0.1",
     "ethereumjs-testrpc-sc": "^6.1.2",
@@ -81,6 +81,7 @@
     "semantic-release": "^15.9.16",
     "sha3": "^2.0.0",
     "solc": "0.4.24",
+    "stream-buffers": "^3.0.2",
     "truffle": "4.1.14",
     "truffle-hdwallet-provider": "0.0.3",
     "truffle-hdwallet-provider-privkey": "^0.2.0",

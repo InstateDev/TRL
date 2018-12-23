@@ -109,7 +109,7 @@ contract('Allowance', function (accounts) {
       assert.equal(returnedAllowance, 0, 'Returned allowance should be zero')
     })
 
-    it('Reverts on invalid Entity', async () => {
+    it('Reverts on invalid allowance value', async () => {
       const invalidAllowanceValue = 101 * percentageResolution // invalid value, for being >100
       await assertRevert(
         AllowanceInstance.addEntity(

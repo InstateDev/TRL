@@ -12,8 +12,8 @@ module.exports = (deployer) => {
       const RegistryFactory = await OwnedRegistryFactoryContract.deployed()
       await RegistryFactory.newRegistry(keccak256('voter'))
       await RegistryFactory.newRegistry(keccak256('candidate'))
-      const candidateAddress = await RegistryFactory.getRegistry(keccak256('candidate'))
-      const voterAddress = await RegistryFactory.getRegistry(keccak256('voter'))
+      let candidateAddress = await RegistryFactory.getRegistry(keccak256('candidate'))
+      let voterAddress = await RegistryFactory.getRegistry(keccak256('voter'))
 
       let periodAddress = await PeriodContract.deployed()
       periodAddress = periodAddress.address
@@ -22,7 +22,7 @@ module.exports = (deployer) => {
       const voterInstance = OwnedRegistryContract.at(voterAddress)
 
       await candidateInstance.init(5, 5, periodAddress)
-	  await voterInstance.init(5, 5, periodAddress)
+      await voterInstance.init(5, 5, periodAddress)
     }
   })
 }
