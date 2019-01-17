@@ -194,18 +194,6 @@ contract('TRL', function (accounts) {
       await assertRevert(TRLInstance.vote(candidateAccounts[0], votingAmount, {from: voterAccounts[0]}))
     })
   })
-  describe('Scoring', async () => {
-    it('Should return the same value as the set scoring algorithm', async () => {
-      const stakedTokens = 10
-      await FrontierTokenInstance.approve(TRLInstance.address, stakedTokens, {from: voterAccounts[0]})
-      await TRLInstance.buyTokenVotes(stakedTokens, {from: voterAccounts[0]})
-      const votingBalance = await VoteTokenInstance.balanceOf(voterAccounts[0])
-      const epoch = await TRLInstance.height();
-      await TRLInstance.vote(candidateAccounts[0], votingBalance, {from: voterAccounts[0]})
-      const TRLScoring = await TRLInstance.scoring.call(epoch, candidateAccounts[0])
-      assert.strictEqual(stakedTokens, TRLScoring.toNumber())
-    })
-  })
   describe('Test event', async () => {
     it('Should emit the test event', async () => {
       const listAddress = await TRLInstance.address
