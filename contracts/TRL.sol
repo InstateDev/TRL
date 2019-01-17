@@ -92,73 +92,6 @@ contract TRL is Ownable, TRLStorage, TRLInterface {
     }
 
     /**
-    * @dev Sets the reputation calculation Window Size
-    * @param _windowSize Size of the window
-    **/
-
-    function setWindowSize(uint256 _windowSize) public returns (uint256) {
-        require(msg.sender == owner());
-        require(_windowSize != 0);
-        require(_windowSize < 100);
-
-        reputationWindowSize = _windowSize;
-        reputationWindowSizeSet = true;
-        return reputationWindowSize;
-
-    }
-
-    /**
-    * @dev Sets the Linear Weights used to Calculate the reputation
-    * @param _weights uint256[]
-    **/
-
-    function setReputationLinWeights(uint256[] _weights) public returns (uint256[]) { 
-        require(msg.sender == owner());
-        require(_weights.length == reputationWindowSize);
-
-        for(uint128 i = 0; i < reputationWindowSize; i++){
-            repWeights.push(_weights[i]);
-        }
-
-        reputationWeightsSet = true;
-        return repWeights;
-    }
-
-    /**
-    * @dev Calculates the Scoring given an address in the current epoch
-    * @param _epoch Epoch where the query is made
-    * @param _account Account that is required to get the scoring
-    **/
-
-    function scoring(uint256 _epoch, address _account) public view returns (uint256) {
-        return voteToken.balanceAt(_epoch,_account);
-    }
-
-    /**
-    * @dev Calculates the Reputation given an address in the current epoch
-    * @param _epoch Epoch where the query is made
-    * @param _account Account that is requirexd to get the reputation
-    **/
-
-    function reputation(uint256 _epoch, address _account) public view returns (uint256) {
-        require(reputationWeightsSet);
-        require(reputationWindowSizeSet);
-        uint256[] memory votes = new uint256[](reputationWindowSize);
-
-        require(repWeights.length == reputationWindowSize); // if window size was changed
-        require(votes.length == reputationWindowSize);
-
-        for(uint i = 0; i < reputationWindowSize; i++) {
-            if(_epoch<i){
-                votes[i] = 0;
-            }
-             votes[i]=  voteToken.balanceAt(i,_account);
-        }
-
-        return weightedScore(repWeights,votes, reputationWindowSize);
-    }
-
-     /**
     * @dev Returns the current period number, by calling the period Lib
     * NOTICE: In deprecation process
     **/
@@ -235,34 +168,6 @@ contract TRL is Ownable, TRLStorage, TRLInterface {
     { 
         return _amount >= votingConstraints[0] &&
         _amount <= votingConstraints[1];
-    }
-
-    /**
-    * @dev Calculates historical score, in a given epoch
-    * @param _weights Array of weights to be used to calculate the score
-    * @param _pastScores Array of past scores for the current user
-    **/
-
-    function weightedScore(uint256[] _weights, uint256[] _pastScores, uint256 _windowSize) public pure returns(uint256) {
-        require(_weights.length == _windowSize);
-
-        uint256 score = 0;
-        uint256 currWeight = 0;
-        uint256 currScore = 0;
-        uint256 currWeightedScore = 0;
-        uint256 lastEpoch = _pastScores.length;
-
-        for(uint i = 0; i < _weights.length; i++) {
-            
-            if(1000000 + lastEpoch - 1 -i < 1000000){
-                continue;
-            }
-            currScore = _pastScores[lastEpoch - 1 - i];
-            currWeight = _weights[i];
-            currWeightedScore = currScore.mul(currWeight);
-            score = score.add(currWeightedScore);
-        }
-        return score;
     }
 
     /**
