@@ -36,10 +36,6 @@ contract TRLStorage {
     // Array setting up the limits when voting [min_amount, Max_amount]
     uint256[2] public votingConstraints = [0, 2^256 -1];
 
-    uint256 public reputationWindowSize = 0; 
-    bool reputationWindowSizeSet = true;
-    bool reputationWeightsSet = false;
-    uint256[] public repWeights;
 
     /** Setters **/
 

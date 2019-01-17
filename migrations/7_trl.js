@@ -31,8 +31,6 @@ module.exports = (deployer) => {
       await ProxyTRL.setVault(Vault.address)
       await ProxyTRL.initPeriod(config.ttl)
       await ProxyTRL.initStages(config.activeTime, config.claimTime)
-      await ProxyTRL.setWindowSize(WINDOW_SIZE)
-      await ProxyTRL.setReputationLinWeights(linWeightsSmaller)
 
       // storing the contract address
       // added this comment to trigger a release
