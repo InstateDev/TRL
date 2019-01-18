@@ -27,8 +27,8 @@
     "type": "git",
     "url": "git+https://github.com/Frontier-project/FrontierLists.git"
   },
-  "release": { 
-    "branch": "develop" 
+  "release": {
+    "branch": "develop"
   },
   "keywords": [
     "lists",
@@ -75,7 +75,7 @@
     "mocha": "^5.2.0",
     "moment": "^2.22.2",
     "npm": "^6.4.1",
-    "openzeppelin-solidity": "^2.0.0",
+    "openzeppelin-solidity": "2.0.0",
     "original-require": "^1.0.1",
     "run-with-testrpc": "^0.3.0",
     "semantic-release": "^15.9.16",
@@ -84,7 +84,7 @@
     "truffle": "4.1.14",
     "truffle-hdwallet-provider": "0.0.3",
     "truffle-hdwallet-provider-privkey": "^0.2.0",
-    "zos-lib": "^1.4.0"
+    "zos-lib": "1.4.0"
   },
   "config": {
     "commitizen": {
